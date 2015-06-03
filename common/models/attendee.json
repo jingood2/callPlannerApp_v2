@@ -1,0 +1,29 @@
+{
+  "name": "Attendee",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "tel": {
+      "type": "string",
+      "index" : {
+        "unique": true
+      }
+    },
+    "role": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "plan": {
+      "type": "belongsTo",
+      "model": "Plan",
+      "foreignKey": "planId"
+    }
+  },
+  "acls": [],
+  "methods": []
+}

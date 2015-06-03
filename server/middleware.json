@@ -1,0 +1,35 @@
+{
+  "initial:before": {
+    "loopback#favicon": {}
+  },
+  "initial": {
+    "compression": {},
+    "morgan": {"params": ["dev",{"buffer": true}]},
+    "cors": {
+      "params": {
+        "origin": false,
+        "credentials": false,
+        "maxAge": 86400
+      }
+    }
+  },
+  "session": {
+  },
+  "auth": {
+  },
+  "parse": {
+    "body-parser#json" : {},
+    "body-parser#urlencoded" : { "params" :{"extended" : false }}
+  },
+  "routes": {
+  },
+  "files": {
+    "loopback#urlNotFound": {}
+  },
+  "final": {
+    "loopback#urlNotFound": {}
+  },
+  "final:after": {
+    "errorhandler": {}
+  }
+}

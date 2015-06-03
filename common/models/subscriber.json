@@ -1,0 +1,37 @@
+{
+  "name": "Subscriber",
+  "base": "User",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "string",
+      "index": {
+	      "unique" : true
+      }
+    }
+  },
+  "validations": [],
+  "relations": {
+    "plans": {
+      "type": "hasMany",
+      "model": "Plan",
+      "foreignKey": "ownerId",
+      "through": "Plan"
+    },
+    "planHistories": {
+      "type": "hasMany",
+      "model": "planHistory",
+      "foreignKey": "",
+      "through": "planHistory"
+    }
+  },
+  "acls": [],
+  "methods": []
+}

@@ -1,0 +1,20 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "redisDS": {
+    "host": "127.0.0.1",
+    "port": "6379",
+    "name": "redisDS",
+    "connector": "redis"
+  },
+  "mongoDS": {
+    "host": "127.0.0.1",
+    "port": 27017,
+    "database": "callPlanner_db2",
+    "name": "mongoDS",
+    "connector": "mongodb",
+    "user": "callPlanner"
+  }
+}
