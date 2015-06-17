@@ -16,5 +16,17 @@
     "name": "mongoDS",
     "connector": "mongodb",
     "user": "callPlanner"
+  },
+  "mysql": {
+    "host": "localhost",
+    "port": 3306,
+    "database": "mydb",
+    "name": "mysql",
+    "connector": "mysql",
+    "debug": true,
+    "user": "planner",
+    "password": "planner0",
+    "createDatabase": true
   }
+
 }

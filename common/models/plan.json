@@ -35,7 +35,8 @@
       "default": "hang up"
     },
     "locationPoint": {
-      "type": "geopoint"
+      "type": "geopoint",
+      "required": false
     },
     "attendees": {
       "type": [

@@ -5,19 +5,16 @@
 
 module.exports = function(app) {
 
-  app.dataSources.db.automigrate('Plan', function(err){
-    if(err) throw err;
-
     // checking no subscriber
     app.models.Subscriber.find(function(err, subscribers){
       if(err) throw err;
 
       var plans = [
-        {ownerId : 1044929591, title: "callPlan1", attendees: [{"tel": "01044929591","role": "owner"},{"tel": "0220145199","role": "member"}]},
-        {ownerId : 1044929592, title: "callPlan2", attendees: [{"tel": "01044929592","role": "owner"},{"tel": "0220145199","role": "member"}]},
-        {ownerId : 1044929593, title: "callPlan3", attendees: [{"tel": "01044929593","role": "owner"},{"tel": "0220145199","role": "member"}]},
-        {ownerId : 1044929594, title: "callPlan4", attendees: [{"tel": "01044929594","role": "member"},{"tel": "0220145199","role": "owner"}]},
-        {ownerId : 220145199, title: "callPlan5", attendees: [{"tel": "0220145199","role": "owner"},{"tel": "01044929592","role": "member"}]}
+        {ownerId : 01044929591, title: "callPlan1", attendees: [{"tel": "01044929591","role": "owner"},{"tel": "0220145199","role": "member"}]},
+        {ownerId : 01044929592, title: "callPlan2", attendees: [{"tel": "01044929592","role": "owner"},{"tel": "0220145199","role": "member"}]},
+        {ownerId : 01044929593, title: "callPlan3", attendees: [{"tel": "01044929593","role": "owner"},{"tel": "0220145199","role": "member"}]},
+        {ownerId : 01044929594, title: "callPlan4", attendees: [{"tel": "01044929594","role": "member"},{"tel": "0220145199","role": "owner"}]},
+        {ownerId : 0220145199, title: "callPlan5", attendees: [{"tel": "0220145199","role": "owner"},{"tel": "01044929592","role": "member"}]}
       ];
 
       var count = plans.length;
@@ -28,9 +25,6 @@ module.exports = function(app) {
 
           console.log('Plan created:', instance.id);
           count--;
-
-          app.dataSources.db.automigrate('Attendee', function(err){
-            if(err) return console.log(err);
 
             var attendees = instance.__data.attendees;
             var count2 = attendees.length;
@@ -48,7 +42,6 @@ module.exports = function(app) {
                 if(count2 === 0) console.log('Attendee Done');
               });
             });
-          });
 
           if(count ===0) console.log('done');
 
@@ -57,6 +50,5 @@ module.exports = function(app) {
       });
 
     });
-  });
 }
 

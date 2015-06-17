@@ -8,21 +8,15 @@ module.exports = function(app) {
 
   var Subscriber = app.models.Subscriber;
 
-  app.dataSources.db.automigrate('Subscriber', function(err) {
-
-    if(err) throw err;
-
-    var subscribers = [
-
+  var subscribers = [
       {id: '01044929591', email: 'jingood1@gmail.com', password: 'c9744052', phone:'01044929591'},
-      {id: '01044929592', email: 'jingood2@gmail.com', password: 'c9744052', phone:'01044929592'},
-      {id: '01044929593', email: 'jingood3@gmail.com', password: 'c9744052', phone:'01044929593'},
+      {id: '01044929592', email: 'jingood2@gmail.com', password: 'c9744052', phone:'01044929592',exchangeEmail: 'jinyoungk@realnetworks.com'},
+      {id: '01044929593', email: 'jingood3@gmail.com', password: 'c9744052', phone:'01044929593', exchangeEmail: 'minsooKim@realnetworks.com'},
       {id: '01044929594', email: 'jingood4@gmail.com', password: 'c9744052', phone:'01044929594'},
       {id: '0220145199', email: 'jingood5@gmail.com', password: 'c9744052', phone:'01044929592'}
-
     ];
 
-    var count = subscribers.length;
+  var count = subscribers.length;
 
     subscribers.forEach(function(subscriber){
 
@@ -40,6 +34,5 @@ module.exports = function(app) {
 
     });
 
-  });
 
 }
