@@ -3,6 +3,7 @@
  * Created by kimjin-young on 2015. 6. 2..
  */
 
+/*
 module.exports = function(app) {
 
     // checking no subscriber
@@ -51,4 +52,5 @@ module.exports = function(app) {
 
     });
 }
+*/
 

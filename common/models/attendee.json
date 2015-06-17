@@ -8,19 +8,19 @@
   "properties": {
     "tel": {
       "type": "string",
-      "index" : {
-        "unique": true
-      }
+      "required" : true
     },
     "role": {
-      "type": "string"
+      "type": "string",
+      "required" : true
     },
     "member": {
       "type": "boolean",
       "default" : false
     },
     "exhangeEmail": {
-      "type": "string"
+      "type": "string",
+      "default" : false
     }
   },
   "validations": [],

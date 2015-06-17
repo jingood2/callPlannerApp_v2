@@ -6,29 +6,30 @@
     "validateUpsert": true
   },
   "properties": {
-    "id": {
-      "type" : "string",
-      "id" : true
+    "id" : {
+      "type" : "String",
+      "length" : 20,
+      "index" : {
+        "unique" : true
+      }
+    },
+    "email" : {
+      "type" : "String",
+      "length" : 50,
+      "index" : {
+        "unique" : true
+      }
     },
     "phone": {
-      "type": "string",
-      "required": true,
-      "index": {
-        "unique" : true
-      }
+      "type": "String",
+      "required": true
     },
-    "email": {
-      "type": "string",
-      "index": {
-        "unique" : true
-      }
-    },
-    "exchangeEmail" : {
-      "type": "string",
+    "exchangeEmail": {
+      "type": "String",
       "required": false
     },
-    "exchangePassword" : {
-      "type": "string",
+    "exchangePassword": {
+      "type": "String",
       "required": false
     }
   },

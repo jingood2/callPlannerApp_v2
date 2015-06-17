@@ -12,8 +12,9 @@ module.exports = function(Plan) {
 
     var app = Plan.app;
     var attendee = app.models.Attendee;
+    var tel;
 
-    var tel = request.accessToken.userId;
+    tel =  request.accessToken.userId;
 
     attendee.find({
       include: 'plan', where: {tel: tel}
@@ -130,6 +131,7 @@ module.exports = function(Plan) {
       req.body.ownerId = req.accessToken.userId;
       next();
     } else {
+      req.body.ownerId = req.body.id;
       next(new Error("must be logged in to create plan"));
     }
 
@@ -155,6 +157,7 @@ module.exports = function(Plan) {
     if(ctx.req.accessToken) {
       // set FK for subscriber
       req.body.ownerId = req.accessToken.userId;
+      console.log('[beforeRemote] ownerId: ' + req.body.ownerId);
       next();
     } else {
       next(new Error("must be logged in to create plan"));
@@ -172,7 +175,8 @@ module.exports = function(Plan) {
 
   Plan.observe('before save', function updateTimestamp(ctx, next){
 
-    if(ctx.isNewInstance) {
+    //if(ctx.isNewInstance) {
+    if(ctx.instance) {
 
       //ctx.data.modified = new Date();
       console.log('[Operation hook] before created..'  );
