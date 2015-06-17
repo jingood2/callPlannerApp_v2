@@ -8,12 +8,14 @@
   "properties": {
     "callType": {
       "type": "string",
-      "default" : "time"
+      "default": "time"
     },
     "ment": {
       "type": "object",
-      "default" : { "container":"phone", "file":"default.wav" }
-
+      "default": {
+        "container": "phone",
+        "file": "default.wav"
+      }
     },
     "scheduledAt": {
       "type": "date"
@@ -46,7 +48,6 @@
     "record": {
       "type": "boolean",
       "default": false
-
     }
   },
   "validations": [],
@@ -59,8 +60,7 @@
     "attendees": {
       "type": "hasMany",
       "model": "Attendee",
-      "foreignKey": "planId",
-      "through": "Attendee"
+      "foreignKey": "planId"
     }
   },
   "acls": [],

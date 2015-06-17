@@ -8,16 +8,14 @@
   "properties": {
     "tel": {
       "type": "string",
-      "index" : {
-        "unique": true
-      }
+      "index": true
     },
     "role": {
       "type": "string"
     },
     "member": {
       "type": "boolean",
-      "default" : false
+      "default": false
     },
     "exhangeEmail": {
       "type": "string"
@@ -29,13 +27,13 @@
       "type": "belongsTo",
       "model": "Plan",
       "foreignKey": "planId"
+    },
+    "subscribers": {
+      "type": "hasAndBelongsToMany",
+      "model": "Subscriber",
+      "foreignKey": "subscriberId"
     }
   },
   "acls": [],
   "methods": []
 }
-
-
-
-
-

@@ -28,19 +28,19 @@
     "public": false
   },
   "Subscriber": {
-    "dataSource": "mysql",
+    "dataSource": "redisDS",
     "public": true
   },
   "Plan": {
-    "dataSource": "mysql",
+    "dataSource": "redisDS",
     "public": true
   },
   "planHistory": {
-    "dataSource": "mysql",
+    "dataSource": "redisDS",
     "public": true
   },
   "Attendee": {
-    "dataSource": "mysql",
+    "dataSource": "redisDS",
     "public": true
   }
 }

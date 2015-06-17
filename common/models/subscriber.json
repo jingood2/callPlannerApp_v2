@@ -7,27 +7,27 @@
   },
   "properties": {
     "id": {
-      "type" : "string",
-      "id" : true
+      "type": "string",
+      "id": true
     },
     "phone": {
       "type": "string",
       "required": true,
       "index": {
-        "unique" : true
+        "unique": true
       }
     },
     "email": {
       "type": "string",
       "index": {
-        "unique" : true
+        "unique": true
       }
     },
-    "exchangeEmail" : {
+    "exchangeEmail": {
       "type": "string",
       "required": false
     },
-    "exchangePassword" : {
+    "exchangePassword": {
       "type": "string",
       "required": false
     }
@@ -45,6 +45,11 @@
       "model": "planHistory",
       "foreignKey": "",
       "through": "planHistory"
+    },
+    "attendees": {
+      "type": "hasAndBelongsToMany",
+      "model": "Attendee",
+      "foreignKey": "subscriberId"
     }
   },
   "acls": [],

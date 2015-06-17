@@ -190,7 +190,7 @@ module.exports = function(Plan) {
     var app = Plan.app;
     var subsObj, attendObj;
 
-    if (ctx.instance) {
+    if (ctx.isNewInstance) {
       var listAttendee = [];
       var Subscriber = app.models.Subscriber;
 
@@ -233,19 +233,22 @@ module.exports = function(Plan) {
 
       });
 
-
-
     } else {
-      console.log('Updated %s matching %j', ctx.Model.pluralModelName, ctx.where);
 
-      if(ctx.data.attendees){
-        console.log('will update attendees...');
-        app.models.Attendee.bulkUpdate(ctx.data.attendees,function(err,objs){
+      if(ctx.instance){
+
+        /*
+        app.models.Attendee.createUpdates(ctx.instance.__data.attendees,function(err,objs){
+
+          // attendee 업데이트시에는 반드시 attendee id를 포함해서 갱신요청해야 함.
+          if(err) {
+            // ToDo: how updating attendee is failed ?
+            return console.log(err);
+          }
           console.log('updated attendees:' + objs);
         });
+        */
       }
-
-      app.models.Attendee.update()
 
       next();
     }

@@ -21,12 +21,11 @@
     "host": "localhost",
     "port": 3306,
     "database": "mydb",
+    "password": "planner0",
     "name": "mysql",
     "connector": "mysql",
     "debug": true,
     "user": "planner",
-    "password": "planner0",
     "createDatabase": true
   }
-
 }
