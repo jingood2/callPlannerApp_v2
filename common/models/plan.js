@@ -17,7 +17,7 @@ module.exports = function(Plan) {
     tel =  request.accessToken.userId;
 
     attendee.find({
-      include: 'plan', where: {tel: tel}
+      include: 'plan', where: {userId: tel}
     },function(err,listPlans){
       if(err) {
         console.log(err);
@@ -45,33 +45,47 @@ module.exports = function(Plan) {
     var app = Plan.app;
     var plan = request;
     var Subscriber = app.models.Subscriber;
-    var attendeeTels = [];
     var response;
 
     Plan.create(plan,function(err,planObj){
 
       // before create job
-      var listAttendee = [];
+      var attendeeTels = [];
 
       if(err) return console.trace(err);
 
       attendees = planObj.__data.attendees;
 
       attendees.forEach(function(attendee){
-        attendee.planId = planObj.id;
-        listAttendee.push(attendee.tel);
+
+        attendeeTels.push(attendee.tel);
 
       });
 
+      console.log(attendeeTels);
+
       // find exchange email for member from Subscriber
-      Subscriber.find({where: {id: {inq: listAttendee }}}, function(err, subsObj) {
+      Subscriber.find({where: {id: {inq: attendeeTels }}}, function(err, subsObj) {
 
         if(err) {
-
           // ToDo: rollback created Plan
           return console.trace(err);
         }
 
+        _.each(subsObj, function(sub){
+          _.each(attendees, function(attendee) {
+            attendee.planId = planObj.id;
+            if (sub.tel === attendee.tel) {
+              attendee.userId = sub.id;
+              attendee.exchangeEmail = sub.exchangeEmail;
+              attendee.exchangePassword = sub.exchangePassword;
+            }
+          });
+        });
+
+        console.log(attendees);
+
+        /*
         attendees.forEach(function(attendee){
           attendee.planId = planObj.id;
 
@@ -82,18 +96,15 @@ module.exports = function(Plan) {
             }
           });
         });
+        */
 
-        // add members included in the plan to attendee
+        // add members included in the lan to attendee
 
         app.models.Attendee.create(attendees, function(err,attendObj){
           if(err) {
             // ToDo: rollback created Plan
 
             return console.log(err);
-          }
-
-          for(var i = 0; i < attendObj.length; i++) {
-            planObj.attendees[i].id = attendObj[i].id;
           }
 
         });
@@ -175,14 +186,36 @@ module.exports = function(Plan) {
 
   Plan.observe('before save', function updateTimestamp(ctx, next){
 
-    //if(ctx.isNewInstance) {
-    if(ctx.instance) {
+    var app = Plan.app;
+    var subsObj, attendObj;
 
-      //ctx.data.modified = new Date();
-      console.log('[Operation hook] before created..'  );
+    if(ctx.isNewInstance) {
+
+
     }else {
-      ctx.data.modified = new Date();
-      //console.log('[Operation hook]before update : %s', planJobName);
+      console.log('[Operation hook]before update.');
+
+      /*
+      var attendees = ctx.instance.__data.attendees;
+
+      if(attendees){
+
+        if(Array.isArray(attendees)) {
+
+          app.models.Attendee.createUpdates(attendees,function(err,result){
+
+            if(err) console.stack(err);
+
+            console.log(result);
+
+          });
+
+        } else {
+
+        }
+
+      }
+      */
     }
     next();
 
@@ -192,67 +225,45 @@ module.exports = function(Plan) {
   Plan.observe('after save', function(ctx,next){
 
     var app = Plan.app;
-    var subsObj, attendObj;
+    var Subscriber = app.models.Subscriber;
 
-    if (ctx.instance) {
-      var listAttendee = [];
-      var Subscriber = app.models.Subscriber;
+    if(ctx.isNewInstance) {
 
-      console.log('Saved %s#%s', ctx.Model.modelName, ctx.instance.id);
 
-      attendees = ctx.instance.__data.attendees;
 
-      ctx.instance.__data.attendees.forEach(function(attendee){
-        attendee.planId = ctx.instance.id;
-        listAttendee.push(attendee.tel);
+    }else {
+      console.log('Updated %s matching', ctx.Model.pluralModelName);
+
+      var array1 = [];
+
+      var attendees = ctx.instance.__data.attendees;
+
+      _.each(attendees,function(record){
+        array1.push(record.tel);
       });
 
-      // find exchange email for member from Subscriber
-      Subscriber.find({where: {id: {inq: listAttendee }}}, function(err, subsObj) {
+      if(attendees){
 
-        if(err) return console.trace(err);
+        if(Array.isArray(attendees)) {
 
-        // only callPlanner member
-        attendees.forEach(function(attendee){
+          console.log(array1);
 
-          // ToDo : need to modified by underscore
-          subsObj.forEach(function(sub){
-            if(sub.id === attendee.tel) {
-              attendee.member = true;
-              attendee.exchangeEmail = sub.exchangeEmail;
-            }
+          app.models.Attendee.destroyAll({where: {tel: array1}},function(err,info){
+
+            if(err) console.stack(err);
+
+            console.log(info);
+
           });
-        });
 
-        app.models.Attendee.create(attendees, function(err,attendObj){
+        } else {
 
-          if(err) return console.log(err);
+        }
 
-          console.log(attendObj);
-
-        });
-
-        //ctx.result = attendObj;
-        next();
-
-      });
-
-
-
-    } else {
-      console.log('Updated %s matching %j', ctx.Model.pluralModelName, ctx.where);
-
-      if(ctx.data.attendees){
-        console.log('will update attendees...');
-        app.models.Attendee.bulkUpdate(ctx.data.attendees,function(err,objs){
-          console.log('updated attendees:' + objs);
-        });
       }
 
-      app.models.Attendee.update()
-
-      next();
     }
+    next();
 
   });
 

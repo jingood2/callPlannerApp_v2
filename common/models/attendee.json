@@ -8,19 +8,22 @@
   "properties": {
     "tel": {
       "type": "string",
-      "required" : true
+      "required": true,
+      "index": {
+        "unique": true
+      }
     },
     "role": {
       "type": "string",
-      "required" : true
-    },
-    "member": {
-      "type": "boolean",
-      "default" : false
+      "required": true
     },
     "exhangeEmail": {
       "type": "string",
-      "default" : false
+      "required": false
+    },
+    "exhangePassword": {
+      "type": "string",
+      "required": false
     }
   },
   "validations": [],
@@ -29,13 +32,13 @@
       "type": "belongsTo",
       "model": "Plan",
       "foreignKey": "planId"
+    },
+    "subscriber": {
+      "type": "belongsTo",
+      "model": "Subscriber",
+      "foreignKey": "userId"
     }
   },
   "acls": [],
   "methods": []
 }
-
-
-
-
-
