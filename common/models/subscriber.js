@@ -1,21 +1,18 @@
 module.exports = function(Subscriber) {
 
-    Subscriber.beforeRemote('create', function(ctx, user, next){
+  Subscriber.observe('after delete', function(ctx,next){
 
-        var req = ctx.req;
-        req.body.id = req.body.tel;
-        next();
+    var app = Subscriber.app;
+
+    app.models.Plan.destroyAll({ownerId:  ctx.where.id},function(err,info){
+
+      if(err) console.stack(err);
+
+      console.log('deleted Plan count :' + info.count);
 
     });
 
-    Subscriber.afterRemote('delete', function(ctx,user,next){
+    next();
 
-        var app = Subscriber.app;
-
-        app.models.Plan.deleteById({where: {id: {inq: user.id}}},function(err,result) {
-
-            next();
-        });
-
-    })
+  })
 };

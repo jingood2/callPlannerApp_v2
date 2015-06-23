@@ -1,7 +1,7 @@
 {
   "name": "Subscriber",
   "base": "User",
-  "idInjection": false,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -10,16 +10,9 @@
       "type": "string",
       "id": true
     },
-    "email": {
-      "type": "String",
-      "index": {
-        "unique": true
-      },
-      "length": 300
-    },
     "tel": {
       "type": "String",
-      "id": true
+      "required": false
     },
     "exchangeEmail": {
       "type": "String",

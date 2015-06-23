@@ -14,10 +14,10 @@ module.exports = function(Plan) {
     var attendee = app.models.Attendee;
     var tel;
 
-    tel =  request.accessToken.userId;
+    ownerId =  request.accessToken.userId;
 
     attendee.find({
-      include: 'plan', where: {userId: tel}
+      include: 'plan', where: {userId: ownerId}
     },function(err,listPlans){
       if(err) {
         console.log(err);
@@ -77,26 +77,13 @@ module.exports = function(Plan) {
             attendee.planId = planObj.id;
             if (sub.tel === attendee.tel) {
               attendee.userId = sub.id;
-              attendee.exchangeEmail = sub.exchangeEmail;
-              attendee.exchangePassword = sub.exchangePassword;
+              //attendee.exchangeEmail = sub.exchangeEmail;
+              //attendee.exchangePassword = sub.exchangePassword;
             }
           });
         });
 
         console.log(attendees);
-
-        /*
-        attendees.forEach(function(attendee){
-          attendee.planId = planObj.id;
-
-          subsObj.forEach(function(sub){
-            if(sub.id === attendee.tel) {
-              attendee.member = true;
-              attendee.exchangeEmail = sub.exchangeEmail;
-            }
-          });
-        });
-        */
 
         // add members included in the lan to attendee
 
@@ -153,11 +140,11 @@ module.exports = function(Plan) {
     // ToDo
     next();
 
-  });
+  })
 
   Plan.afterRemoteError('callPlan', function(ctx,affectedModelInstance, next){
 
-  });
+  })
 
   Plan.beforeRemote('create', function(ctx, affectedModelInstance, next) {
 
@@ -174,7 +161,7 @@ module.exports = function(Plan) {
       next(new Error("must be logged in to create plan"));
     }
 
-  });
+  })
 
   Plan.afterRemote('create', function(ctx, affectedModelInstance, next) {
 
@@ -191,35 +178,73 @@ module.exports = function(Plan) {
 
     if(ctx.isNewInstance) {
 
+      var attendeeTels = [];
+      var attendees = ctx.instance.__data.attendees;
+
+      attendees.forEach(function(attendee){
+        attendeeTels.push(attendee.tel);
+      });
+
+      // find exchange email for member from Subscriber
+      app.models.Subscriber.find({where: {tel: {inq: attendeeTels }}}, function(err, subsObj) {
+
+        if(err) {
+          // ToDo: rollback created Plan
+          return console.trace(err);
+        }
+
+        _.each(subsObj, function(sub){
+          for(var i=0; i < attendees.length;i++){
+            if (sub.tel === attendees[i].tel) {
+              ctx.instance.__data.attendees[i].userId = sub.id;
+              ctx.instance.__data.attendees[i].exchangeEmail = sub.exchangeEmail;
+              ctx.instance.__data.attendees[i].exchangePassword = sub.exchangePassword;
+            }
+
+          }
+        });
+
+        console.log(ctx.instance.__data.attendees);
+      });
+
 
     }else {
       console.log('[Operation hook]before update.');
 
-      /*
-      var attendees = ctx.instance.__data.attendees;
+      var attendeeTels = [];
+      var attendees = ctx.data.attendees;
 
-      if(attendees){
+      attendees.forEach(function(attendee){
+        attendeeTels.push(attendee.tel);
+      });
 
-        if(Array.isArray(attendees)) {
+      // find exchange email for member from Subscriber
+      app.models.Subscriber.find({where: {tel: {inq: attendeeTels }}}, function(err, subsObj) {
 
-          app.models.Attendee.createUpdates(attendees,function(err,result){
-
-            if(err) console.stack(err);
-
-            console.log(result);
-
-          });
-
-        } else {
-
+        if(err) {
+          // ToDo: rollback created Plan
+          return console.trace(err);
         }
 
-      }
-      */
+        _.each(subsObj, function(sub){
+          for(var i=0; i < attendees.length;i++){
+            if (sub.tel === attendees[i].tel) {
+              ctx.data.attendees[i].userId = sub.id;
+              ctx.data.attendees[i].exchangeEmail = sub.exchangeEmail;
+              ctx.data.attendees[i].exchangePassword = sub.exchangePassword;
+            }
+
+          }
+        });
+
+        console.log(ctx.data.attendees);
+      });
+
+
     }
     next();
 
-  });
+  })
 
   // The after save hook is called after a model change was successfully persisted to the datasource.
   Plan.observe('after save', function(ctx,next){
@@ -229,42 +254,82 @@ module.exports = function(Plan) {
 
     if(ctx.isNewInstance) {
 
+      // before create job
+      var attendees = ctx.instance.__data.attendees;
 
+      attendees.forEach(function(attendee){
+        attendee.planId = ctx.instance.id;
+      });
+
+      // add members included in the lan to attendee
+      app.models.Attendee.create(attendees, function(err,attendObj){
+        if(err) {
+          // ToDo: rollback created Plan
+          return console.log(err);
+        }
+
+        console.log(attendObj);
+
+        //next();
+
+      });
 
     }else {
       console.log('Updated %s matching', ctx.Model.pluralModelName);
 
-      var array1 = [];
-
       var attendees = ctx.instance.__data.attendees;
-
-      _.each(attendees,function(record){
-        array1.push(record.tel);
-      });
 
       if(attendees){
 
-        if(Array.isArray(attendees)) {
-
-          console.log(array1);
-
-          app.models.Attendee.destroyAll({where: {tel: array1}},function(err,info){
+          app.models.Attendee.destroyAll({planId: ctx.instance.id},function(err,info){
 
             if(err) console.stack(err);
 
-            console.log(info);
+            var attendees = ctx.instance.__data.attendees;
+
+            attendees.forEach(function(attendee){
+              attendee.planId = ctx.instance.id;
+            });
+
+            // add members included in the lan to attendee
+            app.models.Attendee.create(attendees, function(err,attendObj){
+              if(err) {
+                // ToDo: rollback created Plan
+                return console.log(err);
+              }
+
+              console.log(attendObj);
+
+              //next();
+
+            });
+
 
           });
-
-        } else {
-
-        }
 
       }
 
     }
     next();
 
-  });
+  })
+
+
+  Plan.observe('after delete', function(ctx,next){
+
+    var app = Plan.app;
+
+
+    app.models.Attendee.destroyAll({planId:  ctx.where.id},function(err,info){
+
+      if(err) console.stack(err);
+
+      console.log('deleted Attendees :' + info.count);
+
+    });
+
+    next();
+
+  })
 
 };

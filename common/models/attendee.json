@@ -1,29 +1,18 @@
 {
   "name": "Attendee",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
     "tel": {
       "type": "string",
-      "required": true,
-      "index": {
-        "unique": true
-      }
+      "required": true
     },
     "role": {
       "type": "string",
       "required": true
-    },
-    "exhangeEmail": {
-      "type": "string",
-      "required": false
-    },
-    "exhangePassword": {
-      "type": "string",
-      "required": false
     }
   },
   "validations": [],
