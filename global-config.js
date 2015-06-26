@@ -25,4 +25,11 @@ conf.restApiUrl = url.format({
   pathname: conf.restApiRoot
 });
 
+conf.agendaDB = {
+  hostname: '192.168.4.29',
+  port: 27017
+};
+
+
+
 module.exports = conf;

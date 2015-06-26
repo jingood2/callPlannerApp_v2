@@ -67,6 +67,8 @@
       "foreignKey": "planId"
     }
   },
-  "acls": [],
+  "acls": [
+
+  ],
   "methods": []
 }

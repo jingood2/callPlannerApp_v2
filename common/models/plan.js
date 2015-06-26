@@ -1,6 +1,7 @@
 // require 'server.js' as you would mormally do in any node.js app
 //var app = require('../../server/server');
 var _ = require('underscore');
+var scheduler = require('../../server/lib/scheduler.js');
 
 module.exports = function(Plan) {
 
@@ -163,10 +164,15 @@ module.exports = function(Plan) {
 
   })
 
-  Plan.afterRemote('create', function(ctx, affectedModelInstance, next) {
+  Plan.afterRemote('create', function(ctx, plan, next) {
 
     var req = ctx.req;
     console.log('[afterRemote] Plan create..');
+
+
+    scheduler.addPlanJob(plan.id,plan);
+
+
     next();
 
   });
@@ -174,74 +180,32 @@ module.exports = function(Plan) {
   Plan.observe('before save', function updateTimestamp(ctx, next){
 
     var app = Plan.app;
-    var subsObj, attendObj;
+    var attendees = ctx.instance.__data.attendees;
 
-    if(ctx.isNewInstance) {
 
-      var attendeeTels = [];
-      var attendees = ctx.instance.__data.attendees;
+    // find exchange email for member from Subscriber
+    app.models.Subscriber.find({where: {tel: {inq: _.pluck(attendees,'tel') }}}, function(err, subsObj) {
 
-      attendees.forEach(function(attendee){
-        attendeeTels.push(attendee.tel);
-      });
+      if(err) {
+        // ToDo: rollback created Plan
+        return console.trace(err);
+      }
 
-      // find exchange email for member from Subscriber
-      app.models.Subscriber.find({where: {tel: {inq: attendeeTels }}}, function(err, subsObj) {
-
-        if(err) {
-          // ToDo: rollback created Plan
-          return console.trace(err);
-        }
-
-        _.each(subsObj, function(sub){
-          for(var i=0; i < attendees.length;i++){
-            if (sub.tel === attendees[i].tel) {
-              ctx.instance.__data.attendees[i].userId = sub.id;
-              ctx.instance.__data.attendees[i].exchangeEmail = sub.exchangeEmail;
-              ctx.instance.__data.attendees[i].exchangePassword = sub.exchangePassword;
-            }
-
+      _.each(subsObj, function(sub){
+        for(var i=0; i < attendees.length;i++){
+          if (sub.tel === attendees[i].tel) {
+            ctx.instance.__data.attendees[i].userId = sub.id;
+            ctx.instance.__data.attendees[i].exchangeEmail = sub.exchangeEmail;
+            ctx.instance.__data.attendees[i].exchangePassword = sub.exchangePassword;
           }
-        });
 
-        console.log(ctx.instance.__data.attendees);
-      });
-
-
-    }else {
-      console.log('[Operation hook]before update.');
-
-      var attendeeTels = [];
-      var attendees = ctx.data.attendees;
-
-      attendees.forEach(function(attendee){
-        attendeeTels.push(attendee.tel);
-      });
-
-      // find exchange email for member from Subscriber
-      app.models.Subscriber.find({where: {tel: {inq: attendeeTels }}}, function(err, subsObj) {
-
-        if(err) {
-          // ToDo: rollback created Plan
-          return console.trace(err);
         }
-
-        _.each(subsObj, function(sub){
-          for(var i=0; i < attendees.length;i++){
-            if (sub.tel === attendees[i].tel) {
-              ctx.data.attendees[i].userId = sub.id;
-              ctx.data.attendees[i].exchangeEmail = sub.exchangeEmail;
-              ctx.data.attendees[i].exchangePassword = sub.exchangePassword;
-            }
-
-          }
-        });
-
-        console.log(ctx.data.attendees);
       });
 
+      //console.log(ctx.instance.__data.attendees);
+    });
 
-    }
+
     next();
 
   })
@@ -256,6 +220,8 @@ module.exports = function(Plan) {
 
       // before create job
       var attendees = ctx.instance.__data.attendees;
+
+      console.log('[after save]' + attendees);
 
       attendees.forEach(function(attendee){
         attendee.planId = ctx.instance.id;
@@ -319,14 +285,24 @@ module.exports = function(Plan) {
 
     var app = Plan.app;
 
+    if(ctx.where.id) {
 
-    app.models.Attendee.destroyAll({planId:  ctx.where.id},function(err,info){
+      app.models.Attendee.destroyAll({planId:  ctx.where.id},function(err,info){
 
-      if(err) console.stack(err);
+        if(err) console.stack(err);
 
-      console.log('deleted Attendees :' + info.count);
+        console.log('deleted Attendees :' + info.count);
 
-    });
+      });
+
+      scheduler.removePlanJob(ctx.where.id);
+
+
+    } else {
+
+
+
+    }
 
     next();
 

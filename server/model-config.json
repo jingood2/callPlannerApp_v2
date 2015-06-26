@@ -35,11 +35,15 @@
     "dataSource": "mongoDS",
     "public": true
   },
-  "planHistory": {
+  "callHistory": {
     "dataSource": "mongoDS",
     "public": true
   },
   "Attendee": {
+    "dataSource": "mongoDS",
+    "public": true
+  },
+  "History": {
     "dataSource": "mongoDS",
     "public": true
   }

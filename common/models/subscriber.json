@@ -21,6 +21,14 @@
     "exchangePassword": {
       "type": "String",
       "required": false
+    },
+    "firstname": {
+      "type": "String",
+      "required": false
+    },
+    "lastname": {
+      "type": "String",
+      "required": false
     }
   },
   "validations": [],
@@ -33,7 +41,7 @@
     },
     "planHistories": {
       "type": "hasMany",
-      "model": "planHistory",
+      "model": "callHistory",
       "foreignKey": "",
       "through": ""
     },
@@ -42,8 +50,39 @@
       "model": "Attendee",
       "foreignKey": "",
       "through": ""
+    },
+    "histories": {
+      "type": "hasMany",
+      "model": "History",
+      "foreignKey": "ownerId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "accessType": "WRITE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
   "methods": []
 }

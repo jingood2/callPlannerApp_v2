@@ -15,9 +15,9 @@ module.exports = {
 
   remoting: {
     errorHandler: { disalbeStackTrace: false },
-    json: { strict: false, limit: 100kb},
+    json: { strict: false, limit: '100kb'},
     cors: false,
-    urlencoded: { extended: true, limit: 100kb},
+    urlencoded: { extended: true, limit: '100kb'},
     context: { enableHttpContext: false },
     rest: { normalizeHttpPath: false, xml: false }
   }
