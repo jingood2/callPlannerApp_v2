@@ -1,0 +1,29 @@
+{
+  "name": "History",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "planInfo": {
+      "type": "object"
+    },
+    "planCalledAt": {
+      "type": "date"
+    },
+    "callResult": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "subscriber": {
+      "type": "belongsTo",
+      "model": "Subscriber",
+      "foreignKey": "ownerId"
+    }
+  },
+  "acls": [],
+  "methods": []
+}

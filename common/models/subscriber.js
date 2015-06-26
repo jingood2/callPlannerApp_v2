@@ -22,17 +22,6 @@ module.exports = function(Subscriber) {
       });
     });
 
-
-    /*
-    app.models.Plan.destroyAll({ownerId:  ctx.where.id},function(err,info){
-
-      if(err) console.stack(err);
-
-      console.log('deleted Plan count :' + info.count);
-
-    });
-    */
-
     next();
 
   })
