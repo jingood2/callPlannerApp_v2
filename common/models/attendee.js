@@ -16,4 +16,23 @@ module.exports = function(Attendee) {
 
     });
 
+
+    Attendee.beforeRemote('create', function(ctx, affectedModelInstance, next) {
+
+        // is a member ?
+        // has a exchange account ?
+
+        var app = Attendee.app;
+
+        console.log(affectedModelInstance);
+
+        next();
+
+    });
+
+    Attendee.afterRemote('create', function(ctx, affectedModelInstance, next) {
+
+        next();
+
+    });
 };
